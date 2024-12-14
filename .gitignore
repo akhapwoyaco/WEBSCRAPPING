@@ -5,3 +5,7 @@
 **/R/
 **/data-raw/
 **/data/
+/vehicles_data/analysis                                                        
+/vehicles_data/data                                                         
+/vehicles_data/data-raw                                                        
+/vehicles_data/R
