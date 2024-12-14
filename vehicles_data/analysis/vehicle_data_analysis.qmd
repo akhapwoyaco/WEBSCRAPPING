@@ -1,0 +1,208 @@
+---
+title: "Vehicle Analysis"
+format: pdf
+editor: visual
+subtitle: "https://www.kaiandkaro.com/"
+---
+
+```{r, include=FALSE}
+knitr::opts_chunk$set(echo = T, warning=FALSE,message=FALSE,attr.source='.numberLines',attr.output='.numberLines', fig.align='center', dpi=350, fig.width=15, fig.height=15)
+```
+
+\newpage
+# Introduction
+
+Data Scrapped form [https://www.kaiandkaro.com/](https://www.kaiandkaro.com/)
+
+```{r}
+library(tidyverse)
+library(pander)
+library(broom)
+```
+
+```{r}
+all_vehicles_data <- read_csv('vehicles_data_202412141810.csv')
+```
+## Data
+
+
+```{r}
+#
+analysis_data <- all_vehicles_data %>%
+  select(where(~100*sum(is.na(.x))/length(.x) < 0.01)) |>
+  select(price, source, current_location, mileage, mileage_unit, 
+         annual_insurance_currency, annual_insurance, year_of_manufacture,
+         availability, purchase_status, model_make_name, model_make_vehicle_type) |>
+  mutate(
+    current_location = str_replace_all(
+      current_location, c("[[:punct:]]" = '', 'Port of' = '')) |> 
+      str_to_lower() |> trimws()
+  ) |>
+  mutate(
+    price = as.numeric(price),
+    mileage = as.numeric(mileage),
+    annual_insurance = as.numeric(annual_insurance),
+    current_location = str_replace_all(
+       current_location, 
+       c(
+         "nairobi kenya"= "kenya", "nairobi" = "kenya" ,
+         "mombasa" = "kenya", "kenyakenya" = "kenya",
+         "enroute"  = "overseas", "high seas" = "overseas"
+    )),
+    model_make_name = str_replace_all(
+      model_make_name, c("[[:punct:]]" = '', 'Port of' = '')) |> 
+      str_to_lower() |> trimws() 
+  ) |>
+  mutate(
+    mileage = case_when(
+      mileage_unit == "Miles" ~ mileage*1.6094,
+      .default = mileage
+    )
+  ) |>
+  select(-mileage_unit, -annual_insurance_currency)
+#
+```
+
+
+```{r}
+glimpse(analysis_data)
+```
+
+### EDA
+
+```{r}
+mile_price_source_plot = analysis_data |>
+  ggplot(aes(x = mileage, y = price, colour = source)) +
+  geom_point() +
+  labs(
+    x = "Mileage",
+    y = "Price",
+    title = "Price ~ Milage by source",
+    caption = "https://github.com/akhapwoyaco"
+  ) +
+  scale_y_continuous(
+    labels = scales::unit_format(unit = 'KSH')
+  ) +
+  scale_x_continuous(
+    labels = scales::unit_format(unit = 'kms')
+  ) +
+  theme_bw() +
+  theme(
+    plot.title = element_text(face = 'bold', hjust = 0.5),
+    legend.title = element_blank(),
+    legend.position = 'inside',
+    legend.position.inside = c(0.6, 0.5),
+    legend.background = element_blank()
+  )
+mile_price_source_plot
+ggsave("mile_price_source_plot.png",plot = mile_price_source_plot, 
+       width = 22, height = 15, unit = "cm", dpi = 450)
+```
+
+
+```{r}
+mile_price_availability_plot <- analysis_data |>
+  ggplot(aes(x = mileage, y = price, colour = availability)) + 
+  geom_point() +
+  scale_color_brewer(palette = 'Dark2') +
+  labs(
+    x = "Mileage",
+    y = "Price",
+    title = "Price ~ Milage by availability",
+    caption = "https://github.com/akhapwoyaco"
+  ) +
+  scale_y_continuous(
+    labels = scales::unit_format(unit = 'KSH')
+  ) +
+  scale_x_continuous(
+    labels = scales::unit_format(unit = 'kms')
+  ) +
+  theme_bw() +
+  theme(
+    plot.title = element_text(face = 'bold', hjust = 0.5),
+    legend.title = element_blank(),
+    legend.position = 'inside',
+    legend.position.inside = c(0.6, 0.5),
+    legend.background = element_blank()
+  )
+mile_price_availability_plot
+ggsave("mile_price_availability_plot.png",plot = mile_price_availability_plot, 
+       width = 22, height = 15, unit = "cm", dpi = 450)
+```
+
+
+```{r}
+mile_price_make_plot = analysis_data |>
+  ggplot(aes(x = mileage, y = price, colour = model_make_vehicle_type)) + 
+  geom_point() +
+  scale_color_brewer(palette = 'Dark2') +
+  labs(
+    x = "Mileage",
+    y = "Price",
+    title = "Price ~ Milage by vehicle type",
+    caption = "https://github.com/akhapwoyaco"
+  ) +
+  scale_y_continuous(
+    labels = scales::unit_format(unit = 'KSH')
+  ) +
+  scale_x_continuous(
+    labels = scales::unit_format(unit = 'kms')
+  ) +
+  theme_bw() +
+  theme(
+    plot.title = element_text(face = 'bold', hjust = 0.5),
+    legend.title = element_blank(),
+    legend.position = 'inside',
+    legend.position.inside = c(0.6, 0.5),
+    legend.background = element_blank()
+  )
+mile_price_make_plot
+ggsave("mile_price_make_plot.png",plot = mile_price_make_plot, 
+       width = 22, height = 15, unit = "cm", dpi = 450)
+```
+
+\newpage
+### MODELS
+
+#### Individual Variables 
+```{r}
+# model of numerics
+model_1 <- lm(
+  price~mileage+annual_insurance+year_of_manufacture,
+  data = analysis_data)
+glance(model_1)  |> t() |> pander()
+```
+
+\newpage
+
+```{r}
+rhs <- c('price') #Right hand side of model
+lhs <- c( "mileage","annual_insurance","year_of_manufacture") #Left hand side Y-Variables
+
+#Model List Initiation
+model = list()
+for (i in lhs){
+  for (j in rhs){
+    model[[paste(i, "vs", j)]] <- lm(as.formula(paste(i, "~", j)), 
+                                     data = analysis_data)
+  }
+}
+model %>% pander::pander()
+```
+
+
+\newpage
+#### All Variables
+
+```{r}
+multi_lm = lm(price~., data = analysis_data)
+# summary(multi_lm)
+```
+
+```{r}
+multi_lm |>
+   pander::pander()
+```
+
+
+
