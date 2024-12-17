@@ -36,7 +36,35 @@ ticker |> fill(date, time, market_status, .direction = 'downup') |>
 View(plt_data_1)
 #
 date_data = gsub('/', '_',unique(plt_data_1$date))
+date_u = unique(plt_data_1$date)
 #
 write_csv(
   x = plt_data_1, file = paste('data/', date_data, '_NSE.csv', sep = ''))
+#
+today_prices = plt_data_1 |>
+  ggplot(
+    aes(y = price, x = reorder(issuer, -price))
+  ) +
+  geom_segment(aes(xend = reorder(issuer, -price), yend = 0), colour = 'grey50') +
+  geom_point() +
+  scale_y_continuous(
+    labels = scales::unit_format(unit = 'KSH')
+  ) +
+  labs(
+    title = paste('NSE Ticker Prices: ', date_u),
+    y = 'Price'
+  ) +
+  theme_bw() +
+  theme(
+    axis.title.x = element_blank(),
+    plot.title = element_text(hjust = 0.5, face = 'bold'),
+    axis.text.x = element_text(angle = 90),
+    panel.grid.major.y = element_blank(),
+    # panel.grid.minor.y = element_blank()
+    )
+today_prices
+#
+ggsave(
+  "today_prices.png",plot = today_prices,
+  width = 30, height = 15, unit = "cm", dpi = 550)
 #
