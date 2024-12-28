@@ -16,3 +16,7 @@ Data Scrapped form <https://www.kaiandkaro.com/>
 -   Source: <https://www.govinfo.gov/bulkdata/FR/2024/12/FR-2024-12-20.xml>
 
 ![Top Agencies](./FEDREG_NOTICES/top_agencies_plot.png)
+
+## [Australian Daily Weather](./AustralianWeather)
+
+-   Scrapped from: <http://www.bom.gov.au/climate/dwo/index.shtml> ![](./AustralianWeather/corr_plot.png)
