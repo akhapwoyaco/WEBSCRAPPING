@@ -20,3 +20,15 @@ Data Scrapped form <https://www.kaiandkaro.com/>
 ## [Australian Daily Weather](./AustralianWeather)
 
 -   Scrapped from: <http://www.bom.gov.au/climate/dwo/index.shtml> ![](./AustralianWeather/corr_plot.png)
+
+## [Lotto Data Visualization](LOTTO)
+
+-   Data Source: <https://mylottokenya.co.ke/r>
+
+## Mega Jackpot Draw
+
+![](./LOTTO/m_j_number_freq_plot.jpeg)
+
+## Daily Draw
+
+![](./LOTTO/dd_number_freq_plot.jpeg)
