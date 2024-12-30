@@ -11,7 +11,7 @@
 **/vehicles_data/R/
 
 **/EPRA/
-**/LOTTO/
+
 
 
 **/FEDREG_NOTICES/get_data_FED.R
@@ -20,3 +20,9 @@
 **/AustralianWeather/get_data.R
 **/AustralianWeather/get_data_V2.R
 **/AustralianWeather/sert.RData
+
+**/LOTTO/.ipynb_checkpoints
+**/LOTTO/data
+**/LOTTO/data-raw
+**/LOTTO/plot_analysis_files
+**/LOTTO/R

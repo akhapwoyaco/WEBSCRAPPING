@@ -1,0 +1,147 @@
+---
+title: "LOTTO"
+author: "Author"
+date: "`r Sys.Date()`"
+output:
+  pdf_document:
+    toc: yes
+    toc_depth: '6'
+urlcolor: blue
+subtitle: ' '
+fontsize: 12pt
+header-includes: \usepackage{setspace}
+---
+
+\newpage
+
+```{r, include=FALSE}
+knitr::opts_chunk$set(
+  echo = F, warning=FALSE, message=FALSE, fig.align='center', 
+  fig.width=15, fig.height=10, attr.source='.numberLines',attr.output='.numberLines')
+```
+
+# Load Libraries
+
+```{r}
+library(tidyverse)
+library(janitor)
+library(ggthemes)
+```
+
+Data Source: <https://mylottokenya.co.ke/r>
+
+## Mega Jackpot Draw
+
+### Data Import
+
+```{r}
+mj = read_csv("lotto_data_mj_R_202412291737.csv") |>
+  clean_names() |> select(-winners)
+```
+
+
+```{r}
+head(mj)
+```
+
+### Plot
+
+```{r}
+# View()
+m_j_number_freq_plot = mj |>
+  separate_longer_delim(
+    cols = winning_numbers, delim = ','
+  ) |>
+  mutate(across(!date, .fns = as.numeric)) |>
+  group_by(winning_numbers) |>
+  summarise(
+    n = n()
+  ) |> 
+  ggplot(
+    aes(x = winning_numbers, y = n)
+  ) +
+  geom_col(
+    fill = '#788c0e', color = 'white') +
+  scale_x_continuous(n.breaks = 50, expand = c(0,0)) +
+  scale_y_continuous(expand = c(-.5,NA)) +
+  theme_classic() + 
+  labs(
+    title = "Mega Jackpot Draw",
+    x = "Winning Numbers", y = "Frequency"
+  ) +
+  theme(
+    plot.title = element_text(face = 'bold', hjust = 0.5),
+    panel.grid.major.y = element_line(),
+    axis.text.x = element_text(face = 'bold', ),
+    axis.ticks.x.bottom = element_blank()
+  ) 
+m_j_number_freq_plot
+```
+
+### Save Plot
+
+```{r}
+ggsave(
+  m_j_number_freq_plot, height = 30, units = "cm",
+  filename = "m_j_number_freq_plot.jpeg", width = 30)
+```
+
+\newpage
+
+## Daily Draw
+
+### Data Import
+
+```{r}
+dd = read_csv("lotto_data_dd_R_202412300228.csv") |>
+  clean_names() |> select(-winners)
+```
+
+```{r}
+head(dd)
+```
+
+### Plot
+
+```{r}
+dd_number_freq_plot = dd |>
+  select(-time) |>
+  separate_longer_delim(
+    cols = winning_numbers, delim = ','
+  ) |>
+  mutate(across(!draw_id, .fns = as.numeric)) |>
+  group_by(winning_numbers) |>
+  summarise(
+    n = n()
+  ) |> 
+  ggplot(
+    aes(x = winning_numbers, y = n)
+  ) +
+  geom_col(
+    fill = '#788c0e', color = 'white') +
+  scale_x_continuous(n.breaks = 50, expand = c(0,0)) +
+  scale_y_continuous(expand = c(-.5,NA)) +
+  theme_classic() + 
+  labs(
+    title = "Daily Draw",
+    x = "Winning Numbers", y = "Frequency"
+  ) +
+  theme(
+    plot.title = element_text(face = 'bold', hjust = 0.5),
+    panel.grid.major.y = element_line(),
+    axis.text.x = element_text(face = 'bold', ),
+    axis.ticks.x.bottom = element_blank()
+  ) 
+dd_number_freq_plot
+```
+
+### Save Plot
+
+```{r}
+ggsave(
+  dd_number_freq_plot, height = 30, units = "cm",
+  filename = "dd_number_freq_plot.jpeg", width = 30)
+#
+
+
+```
