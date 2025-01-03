@@ -10,9 +10,10 @@ knitr::opts_chunk$set(echo = T, warning=FALSE,message=FALSE,attr.source='.number
 ```
 
 \newpage
+
 # Introduction
 
-Data Scrapped form [https://www.kaiandkaro.com/](https://www.kaiandkaro.com/)
+Data Scrapped form <https://www.kaiandkaro.com/>
 
 ```{r}
 library(tidyverse)
@@ -21,10 +22,10 @@ library(broom)
 ```
 
 ```{r}
-all_vehicles_data <- read_csv('vehicles_data_202412141810.csv')
+all_vehicles_data <- read_csv('vehicles_data_202501040221.csv')
 ```
-## Data
 
+## Data
 
 ```{r}
 #
@@ -63,7 +64,6 @@ analysis_data <- all_vehicles_data %>%
 #
 ```
 
-
 ```{r}
 glimpse(analysis_data)
 ```
@@ -99,7 +99,6 @@ ggsave("mile_price_source_plot.png",plot = mile_price_source_plot,
        width = 22, height = 15, unit = "cm", dpi = 450)
 ```
 
-
 ```{r}
 mile_price_availability_plot <- analysis_data |>
   ggplot(aes(x = mileage, y = price, colour = availability)) + 
@@ -129,7 +128,6 @@ mile_price_availability_plot
 ggsave("mile_price_availability_plot.png",plot = mile_price_availability_plot, 
        width = 22, height = 15, unit = "cm", dpi = 450)
 ```
-
 
 ```{r}
 mile_price_make_plot = analysis_data |>
@@ -162,9 +160,11 @@ ggsave("mile_price_make_plot.png",plot = mile_price_make_plot,
 ```
 
 \newpage
+
 ### MODELS
 
-#### Individual Variables 
+#### Individual Variables
+
 ```{r}
 # model of numerics
 model_1 <- lm(
@@ -190,8 +190,8 @@ for (i in lhs){
 model %>% pander::pander()
 ```
 
-
 \newpage
+
 #### All Variables
 
 ```{r}
@@ -203,6 +203,3 @@ multi_lm = lm(price~., data = analysis_data)
 multi_lm |>
    pander::pander()
 ```
-
-
-
