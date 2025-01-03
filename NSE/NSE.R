@@ -65,6 +65,6 @@ today_prices = plt_data_1 |>
 today_prices
 #
 ggsave(
-  "today_prices.png",plot = today_prices,
+  paste(date_data, "today_prices.png", sep = "_") ,plot = today_prices,
   width = 30, height = 15, unit = "cm", dpi = 550)
 #
