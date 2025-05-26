@@ -6,7 +6,7 @@ library(gridExtra)
 library(cowplot)
 library(ggrepel)
 #
-australian_weather_202412281334 <- read_csv("data-raw/australian_weather_202412281334.csv")
+australian_weather_202412281334 <- read_csv("australian_weather.csv")
 colnames(australian_weather_202412281334) <- c(
   "date", "day", "minimum_temperature_c", "maximum_temperature_c", 
   "rainfall_mm", "evaporation_mm", "sunshine_hours", 
