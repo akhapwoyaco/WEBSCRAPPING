@@ -2,6 +2,7 @@
 library(purrr)
 library(dplyr)
 library(httr)
+library(tidyverse)
 #
 # tickers
 ticker_req <- POST(
